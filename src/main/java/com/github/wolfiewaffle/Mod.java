@@ -10,6 +10,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -47,14 +48,25 @@ public class Mod
 
     @SubscribeEvent
     public void tooltipEvent(final ItemTooltipEvent event) {
-        ResourceLocation item = event.getItemStack().getItem().getRegistryName();
+        ItemStack stack = event.getItemStack();
+
+        // Armor only
+        if (BaseConfig.onlyArmor.get() && !InventoryEvent.isArmor(stack, event.getPlayer())) {
+            return;
+        }
+
+        ResourceLocation item = stack.getItem().getRegistryName();
         int weight = Mod.DEFAULT_WEIGHT;
 
         if (client_weight_map.containsKey(item)) {
             weight = client_weight_map.get(item);
         }
 
-        event.getToolTip().add(new TextComponent("Weight " + weight).withStyle(ChatFormatting.GOLD));
+        int config = BaseConfig.tooltipMode.get();
+
+        if (config == 0 || (config == 1 && weight > 0)) {
+            event.getToolTip().add(new TextComponent("Weight " + weight).withStyle(ChatFormatting.GOLD));
+        }
     }
 
     private void setup(final FMLCommonSetupEvent event) {
