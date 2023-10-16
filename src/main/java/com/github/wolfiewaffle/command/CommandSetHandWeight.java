@@ -8,34 +8,20 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.core.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryManager;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraft.resources.ResourceLocation;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.ref.Reference;
 import java.nio.file.Path;
 
 public class CommandSetHandWeight {
-    private static String mcmeta = "{\n" +
-            "    \"pack\": {\n" +
-            "        \"pack_format\": 9,\n" +
-            "        \"description\": \"Inventory Weights\"\n" +
-            "    }\n" +
-            "}";
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> command
@@ -71,7 +57,14 @@ public class CommandSetHandWeight {
             // Write new entries
             try (FileWriter fileWriter = new FileWriter(canonFile)) {
                 canonFile.createNewFile();
-                fileWriter.write("" + mcmeta);
+                String mcmeta = """
+                        {
+                            "pack": {
+                                "pack_format": 9,
+                                "description": "Inventory Weights"
+                            }
+                        }""";
+                fileWriter.write(mcmeta);
             } catch (IOException e) {
                 e.printStackTrace();
             }
