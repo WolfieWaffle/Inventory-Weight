@@ -23,9 +23,12 @@ public class CommandGetWeight {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> command
-                = Commands.literal("getweight")
+            = Commands.literal("inventoryweight")
+            .then(
+                Commands.literal("get_player_weight")
                 .requires((commandSource) -> commandSource.hasPermission(2))
-                .executes(CommandGetWeight::get);
+                .executes(CommandGetWeight::get)
+            );
 
         dispatcher.register(command);
     }

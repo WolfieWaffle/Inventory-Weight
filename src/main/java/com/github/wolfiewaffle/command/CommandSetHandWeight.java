@@ -39,11 +39,14 @@ public class CommandSetHandWeight {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> command
-                = Commands.literal("setweight")
+            = Commands.literal("inventoryweight")
+            .then(
+                Commands.literal("set_item_weight")
                 .requires((commandSource) -> commandSource.hasPermission(2))
                 .then(Commands.argument("value", IntegerArgumentType.integer(0, Integer.MAX_VALUE))
                         .executes(CommandSetHandWeight::set)
-                );
+                )
+            );
 
         dispatcher.register(command);
     }
