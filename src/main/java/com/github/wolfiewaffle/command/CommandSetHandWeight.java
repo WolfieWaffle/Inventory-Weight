@@ -8,16 +8,25 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.core.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.fml.loading.FileUtils;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryManager;
+import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.resources.ResourceLocation;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.ref.Reference;
 import java.nio.file.Path;
 
 public class CommandSetHandWeight {
@@ -48,7 +57,7 @@ public class CommandSetHandWeight {
         Path path = commandContext.getSource().getServer().getWorldPath(LevelResource.ROOT);
         path = Path.of(path + "/datapacks/inventory_weights_datapack");
 
-        FileUtils.getOrCreateDirectory(path, "datapack root");
+        FMLPaths.getOrCreateGameRelativePath(path);
         File packFile = new File(path + "/pack.mcmeta");
 
         //Write pack.mcmeta
@@ -68,9 +77,12 @@ public class CommandSetHandWeight {
         }
 
         // Write json
-        String itemPath = path + "/data/" + item.getRegistryName().getNamespace() + "/inventory_weights/";
-        File jsonFile = new File(itemPath + item.getRegistryName().getPath() + ".json");
-        FileUtils.getOrCreateDirectory(Path.of(itemPath), item.getRegistryName().getPath() + " file");
+        ResourceLocation itemResource = ForgeRegistries.ITEMS.getKey(item); // 1.20
+        assert itemResource != null;
+
+        String itemPath = path + "/data/" + itemResource.getNamespace() + "/inventory_weights/";
+        File jsonFile = new File(itemPath + itemResource.getPath() + ".json");
+        FMLPaths.getOrCreateGameRelativePath(Path.of(itemPath));
 
         try {
             // This throws if the file path is invalid
@@ -87,7 +99,8 @@ public class CommandSetHandWeight {
             e.printStackTrace();
         }
 
-        player.sendMessage(new TextComponent("SET WEIGHT " + value + " (/reload to update)"), player.getUUID());
+        //player.sendMessage(new TextComponent("SET WEIGHT " + value + " (/reload to update)"), player.getUUID());
+        player.displayClientMessage(Component.literal("SET WEIGHT " + value + " (/reload to update)"), true);
 
         return Command.SINGLE_SUCCESS;
     }
@@ -99,7 +112,8 @@ public class CommandSetHandWeight {
         // Write json
         String itemPath = path + "/data/" + loc.getNamespace() + "/inventory_weights/";
         File jsonFile = new File(itemPath + loc.getPath() + ".json");
-        FileUtils.getOrCreateDirectory(Path.of(itemPath), loc.getPath() + " file");
+        FMLPaths.getOrCreateGameRelativePath(Path.of(itemPath));
+
 
         try {
             // This throws if the file path is invalid

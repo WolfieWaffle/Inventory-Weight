@@ -20,12 +20,12 @@ public class InventoryWeightPacket {
     }
 
     public static InventoryWeightPacket fromBytes(final FriendlyByteBuf buf) {
-        final Map<ResourceLocation, Integer> pacMap = buf.readWithCodec(Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT));
+        final Map<ResourceLocation, Integer> pacMap = buf.readJsonWithCodec(Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT));
         return new InventoryWeightPacket(pacMap);
     }
 
     public static void toBytes(final InventoryWeightPacket msg, final FriendlyByteBuf buf) {
-        buf.writeWithCodec(Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT), msg.map);
+        buf.writeJsonWithCodec(Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT), msg.map);
     }
 
     public static void handlePacket(final InventoryWeightPacket message, final Supplier<NetworkEvent.Context> contextSupplier) {

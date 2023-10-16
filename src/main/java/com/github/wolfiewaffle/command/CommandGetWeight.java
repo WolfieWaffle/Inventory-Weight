@@ -8,11 +8,11 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.fml.loading.FileUtils;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -35,7 +35,8 @@ public class CommandGetWeight {
 
         float weight = InventoryEvent.getAllWeight(player.getInventory());
 
-        player.sendMessage(new TextComponent("CURRENT WEIGHT " + weight), player.getUUID());
+        //player.sendMessage(new TextComponent("CURRENT WEIGHT " + weight), player.getUUID()); // deprecated
+        player.displayClientMessage(Component.literal("CURRENT WEIGHT " + weight), true);
 
         return Command.SINGLE_SUCCESS;
     }
@@ -47,7 +48,7 @@ public class CommandGetWeight {
         // Write json
         String itemPath = path + "/data/" + loc.getNamespace() + "/inventory_weights/";
         File jsonFile = new File(itemPath + loc.getPath() + ".json");
-        FileUtils.getOrCreateDirectory(Path.of(itemPath), loc.getPath() + " file");
+        FMLPaths.getOrCreateGameRelativePath(Path.of(itemPath));
 
         try {
             // This throws if the file path is invalid
