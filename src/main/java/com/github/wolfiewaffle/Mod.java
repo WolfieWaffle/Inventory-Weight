@@ -8,7 +8,7 @@ import com.github.wolfiewaffle.network.InventoryWeightsPacketHandler;
 import com.github.wolfiewaffle.reader.CodecJsonDataManager;
 import com.mojang.serialization.Codec;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -17,6 +17,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
 
@@ -51,21 +52,22 @@ public class Mod
         ItemStack stack = event.getItemStack();
 
         // Armor only
-        if (BaseConfig.onlyArmor.get() && !InventoryEvent.isArmor(stack, event.getPlayer())) {
+        if (BaseConfig.onlyArmor.get() && !InventoryEvent.isArmor(stack, event.getEntity())) {
             return;
         }
+        ResourceLocation itemResource = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        assert itemResource != null;
 
-        ResourceLocation item = stack.getItem().getRegistryName();
         int weight = Mod.DEFAULT_WEIGHT;
 
-        if (client_weight_map.containsKey(item)) {
-            weight = client_weight_map.get(item);
+        if (client_weight_map.containsKey(itemResource)) {
+            weight = client_weight_map.get(itemResource);
         }
 
         int config = BaseConfig.tooltipMode.get();
 
         if (config == 0 || (config == 1 && weight > 0)) {
-            event.getToolTip().add(new TextComponent("Weight " + weight).withStyle(ChatFormatting.GOLD));
+            event.getToolTip().add(Component.literal("Weight " + weight).withStyle(ChatFormatting.GOLD));
         }
     }
 

@@ -10,12 +10,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.UUID;
 
@@ -92,7 +92,9 @@ public class InventoryEvent {
     }
 
     private static float getWeightStack(ItemStack stack) {
-        ResourceLocation loc = stack.getItem().getRegistryName();
+        ResourceLocation loc = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        assert loc != null;
+
         if (stack != ItemStack.EMPTY) {
             float amount = 0;
 
