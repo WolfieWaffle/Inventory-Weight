@@ -31,9 +31,10 @@ public class InventoryEvent {
         Inventory inventory = event.player.getInventory();
 
         float weight = getAllWeight(inventory);
+        double capacity = getListCapacity(inventory.armor) + BaseConfig.maxWeight.get();
 
 
-        float speedPenalty = (float) (Math.max(0.1f, 1.0f - (weight / BaseConfig.maxWeight.get())) - 1);
+        float speedPenalty = (float) (Math.max(0.1f, 1.0f - (weight / capacity)) - 1);
         boolean hasChanged = true;
 
         AttributeInstance instance = event.player.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -80,6 +81,23 @@ public class InventoryEvent {
         return weight;
     }
 
+    private static float getListCapacity(NonNullList<ItemStack> list) {
+        float capacity = 0;
+
+        for (ItemStack stack : list) {
+            if (!stack.isEmpty()) {
+                ResourceLocation loc = ForgeRegistries.ITEMS.getKey(stack.getItem());
+                assert loc != null;
+
+                if (Mod.armor_upgrade_codec.getData().containsKey(loc)) {
+                    capacity += Mod.armor_upgrade_codec.getData().get(loc);
+                }
+            }
+        }
+
+        return capacity;
+    }
+
     private static float checkForShield(ItemStack offhand, ItemStack selected) {
         float weight = 0;
         if (offhand.getItem() instanceof ShieldItem) {
@@ -101,7 +119,7 @@ public class InventoryEvent {
             if (Mod.weight_codec.getData().containsKey(loc)) {
                 amount += Mod.weight_codec.getData().get(loc);
             } else {
-                amount += Mod.DEFAULT_WEIGHT;
+                amount += BaseConfig.defWeight.get();
             }
 
             return amount * stack.getCount();

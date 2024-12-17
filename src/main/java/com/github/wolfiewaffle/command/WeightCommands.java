@@ -12,6 +12,7 @@ public class WeightCommands {
         CommandDispatcher<CommandSourceStack> commandDispatcher = event.getDispatcher();
 
         CommandSetHandWeight.register(commandDispatcher);
+        CommandSetArmorBonus.register(commandDispatcher);
         CommandGetWeight.register(commandDispatcher);
     }
 }

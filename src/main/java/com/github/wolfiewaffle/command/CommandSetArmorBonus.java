@@ -9,28 +9,19 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-
-public class CommandSetHandWeight {
+public class CommandSetArmorBonus {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> command
             = Commands.literal("inventoryweight")
             .then(
-                Commands.literal("set_item_weight")
+                Commands.literal("set_armor_carry_bonus")
                 .requires((commandSource) -> commandSource.hasPermission(2))
                 .then(Commands.argument("value", IntegerArgumentType.integer(0, Integer.MAX_VALUE))
-                        .executes(CommandSetHandWeight::set)
+                        .executes(CommandSetArmorBonus::set)
                 )
             );
 
@@ -44,10 +35,10 @@ public class CommandSetHandWeight {
 
         Item item = player.getMainHandItem().getItem();
 
-        WeightCommandTools.attemptWriteToDatapack(commandContext, "inventory_weights", item, value);
+        WeightCommandTools.attemptWriteToDatapack(commandContext, "armor_weight_bonus", item, value);
 
         //player.sendMessage(new TextComponent("SET WEIGHT " + value + " (/reload to update)"), player.getUUID());
-        player.displayClientMessage(Component.literal("SET WEIGHT TO " + value + " (/reload to update)"), true);
+        player.displayClientMessage(Component.literal("SET CARRY BONUS TO " + value + " (/reload to update)"), true);
 
         return Command.SINGLE_SUCCESS;
     }
